@@ -15,7 +15,7 @@ class MessageResponse(MessageBase):
     sender_id: int = Field(..., description="ID of the sender")
     receiver_id: int = Field(..., description="ID of the receiver")
     created_at: datetime = Field(..., description="Timestamp when message was created")
-    conversation_id: int = Field(..., description="ID of the conversation")
+    conversation_id: uuid.UUID = Field(..., description="ID of the conversation")
 
 class PaginatedMessageRequest(BaseModel):
     page: int = Field(1, description="Page number for pagination")

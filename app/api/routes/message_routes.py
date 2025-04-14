@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter, Depends, Query, Path, Body
 from typing import Optional
 from datetime import datetime
@@ -24,7 +25,7 @@ async def send_message(
 
 @router.get("/conversation/{conversation_id}", response_model=PaginatedMessageResponse)
 async def get_conversation_messages(
-    conversation_id: int = Path(..., description="ID of the conversation"),
+    conversation_id: uuid.UUID = Path(..., description="ID of the conversation"),
     page: int = Query(1, description="Page number"),
     limit: int = Query(20, description="Number of messages per page"),
     message_controller: MessageController = Depends()
@@ -40,7 +41,7 @@ async def get_conversation_messages(
 
 @router.get("/conversation/{conversation_id}/before", response_model=PaginatedMessageResponse)
 async def get_messages_before_timestamp(
-    conversation_id: int = Path(..., description="ID of the conversation"),
+    conversation_id: uuid.UUID = Path(..., description="ID of the conversation"),
     before_timestamp: datetime = Query(..., description="Get messages before this timestamp"),
     page: int = Query(1, description="Page number"),
     limit: int = Query(20, description="Number of messages per page"),

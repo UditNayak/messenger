@@ -66,29 +66,29 @@ class CassandraClient:
             self.cluster.shutdown()
             logger.info("Cassandra connection closed")
     
-    def execute(self, query: str, params: Union[Sequence, dict] = None) -> List[Dict[str, Any]]:
-        """
-        Execute a CQL query.
-        
-        Args:
-            query: The CQL query string
-            params: The parameters for the query
+    def execute(self, query: str, params = None) -> List[Dict[str, Any]]:
+            """
+            Execute a CQL query.
             
-        Returns:
-            List of rows as dictionaries
-        """
-        if not self.session:
-            self.connect()
+            Args:
+                query: The CQL query string
+                params: The parameters for the query
+                
+            Returns:
+                List of rows as dictionaries
+            """
+            if not self.session:
+                self.connect()
+            
+            try:
+                statement = SimpleStatement(query)
+                result = self.session.execute(statement, params or {})
+                return list(result)
+            except Exception as e:
+                logger.error(f"Query execution failed: {str(e)}")
+                raise
         
-        try:
-            statement = SimpleStatement(query)
-            result = self.session.execute(statement, params or {})
-            return list(result)
-        except Exception as e:
-            logger.error(f"Query execution failed: {str(e)}")
-            raise
-    
-    def execute_async(self, query: str, params: Union[Sequence, dict] = None):
+    def execute_async(self, query: str, params = None):
         """
         Execute a CQL query asynchronously.
         
@@ -99,22 +99,16 @@ class CassandraClient:
         Returns:
             Async result object
         """
-        print("currently in async execute")
         if not self.session:
             self.connect()
         
         try:
             statement = SimpleStatement(query)
-            print("currently in async execute after statement")
-            print(f"Executing async query: {query} with params: {params}")
-            print("statement is: ", statement)
-            # return self.session.execute_async(statement, tuple(params) or ())
-            return self.session.execute_async(query, tuple(params))
+            return self.session.execute_async(statement, params or {})
         except Exception as e:
             logger.error(f"Async query execution failed: {str(e)}")
-            print(f"Async query execution failed: {str(e)}")
             raise
-    
+        
     def get_session(self) -> Session:
         """Get the Cassandra session."""
         if not self.session:

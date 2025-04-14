@@ -56,32 +56,26 @@ def create_tables(session):
     This is where students will define the table schemas based on the requirements.
     """
     logger.info("Creating tables...")
-    
-    # TODO: Students should implement table creation
-    # Hint: Consider:
-    # - What tables are needed to implement the required APIs?
-    # - What should be the primary keys and clustering columns?
-    # - How will you handle pagination and time-based queries?
     session.execute("""
     CREATE TABLE IF NOT EXISTS messages_by_conversation (
         conversation_id UUID,
         sent_at TIMESTAMP,
         message_id UUID,
         sender_id INT,
-        recipient_id INT,
-        message_text TEXT,
+        receiver_id INT,
+        content TEXT,
         PRIMARY KEY ((conversation_id), sent_at, message_id)
     ) WITH CLUSTERING ORDER BY (sent_at DESC, message_id ASC);
     """)
 
     session.execute("""
-    CREATE TABLE IF NOT EXISTS conversations_by_user (
-        user_id INT,
-        last_activity TIMESTAMP,
-        conversation_id UUID,
-        participant_id INT,
-        PRIMARY KEY ((user_id), last_activity, conversation_id)
-    ) WITH CLUSTERING ORDER BY (last_activity DESC, conversation_id ASC);
+    CREATE TABLE IF NOT EXISTS conversations (
+        conversation_id UUID PRIMARY KEY,
+        list_of_users LIST<INT>,
+        last_message_content TEXT,
+        last_message_at TIMESTAMP,
+        created_at TIMESTAMP
+    );
     """)
 
     
